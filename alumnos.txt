@@ -1,0 +1,7 @@
+David Arroyo Segovia
+Ignacio Cepeda Bajo
+
+Notas:
+Hemos incorporado una nueva funcionalidad a la aplicación. Consiste en poder
+añadir efectos de sonido a las jugadas manuales. El menú para configurar los
+efectos de sonido se encuentra en la barra de botones.
