@@ -17,7 +17,7 @@ public class JMessagePanel extends JScrollPane {
 		this.status.setFocusable(false);
 		
 		this.setViewportView(status);
-		this.setPreferredSize(new Dimension(200, 170));
+		this.setPreferredSize(new Dimension(250, 170));
 	}
 	
 	public void setStatusMessage(String status) {

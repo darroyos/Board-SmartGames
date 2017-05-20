@@ -77,7 +77,7 @@ public class JPlayerInfoTable<S extends GameState<S, A>, A extends GameAction<S,
 		});
 
 		JScrollPane scrollTable = new JScrollPane(table);
-		scrollTable.setPreferredSize(new Dimension(200, 100));
+		scrollTable.setPreferredSize(new Dimension(250, 100));
 		table.setFocusable(false); // to avoid problems with the JFrame KeyListener
 		this.add(scrollTable);
 	}

@@ -143,6 +143,11 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		top.add(mode);
 		
 		/*---------------------------------------------------------------*/
+		/*             MAIN LAYOUT > TOP LAYOUT > SMART MOVES            */
+		/*---------------------------------------------------------------*/
+		top.add(new SmartMoves());
+		
+		/*---------------------------------------------------------------*/
 		/*                  MAIN LAYOUT > RIGHT LAYOUT                   */
 		/*---------------------------------------------------------------*/
 		BoxLayout rightLayout = new BoxLayout(right, BoxLayout.Y_AXIS);
@@ -386,6 +391,55 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			this.exit.setFocusable(false);
 			this.exit.addActionListener(new ExitListener());
 			this.add(exit);	
+		}
+	}
+	
+	private class SmartMoves extends JPanel {
+		
+		private static final long serialVersionUID = 8577611644379439121L;
+
+		public SmartMoves() {
+			FlowLayout smartLy = new FlowLayout();
+			this.setLayout(smartLy);
+			this.setBorder(BorderFactory.createTitledBorder("Smart Moves"));
+			
+			// -----------------------------------
+			// Threads chooser
+			// -----------------------------------
+			JPanel threads = new JPanel(new FlowLayout());
+			
+			JLabel brainIcon = new JLabel(new ImageIcon(Utils.loadImage("brain.png")));
+			threads.add(brainIcon);
+			JSpinner numThreads = 
+					new JSpinner(new SpinnerNumberModel(1, 1, Runtime.getRuntime().availableProcessors(), 1));
+			threads.add(numThreads);
+			threads.add(new JLabel("threads"));
+			
+			this.add(threads);
+			
+			// -----------------------------------
+			// Threads chooser
+			// -----------------------------------
+			JPanel timeOut = new JPanel(new FlowLayout());
+			
+			JLabel timeIcon = new JLabel(new ImageIcon(Utils.loadImage("timer.png")));
+			timeOut.add(timeIcon);
+			JSpinner timeOutSel = 
+					new JSpinner(new SpinnerNumberModel(500, 500, 5000, 500));
+			timeOut.add(timeOutSel);
+			timeOut.add(new JLabel("ms."));
+			
+			this.add(timeOut);
+			
+			// -----------------------------------
+			// Stop thinking
+			// -----------------------------------
+			JPanel stop = new JPanel(new FlowLayout());
+			JButton stopButton = new JButton(new ImageIcon(Utils.loadImage("stop.png")));
+			stop.add(stopButton);
+			
+			this.add(stop);
+			
 		}
 	}
 	
