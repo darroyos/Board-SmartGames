@@ -10,8 +10,8 @@ import es.ucm.fdi.tp.base.console.ConsolePlayer;
 import es.ucm.fdi.tp.base.model.GameAction;
 import es.ucm.fdi.tp.base.model.GamePlayer;
 import es.ucm.fdi.tp.base.model.GameState;
+import es.ucm.fdi.tp.base.player.ConcurrentAiPlayer;
 import es.ucm.fdi.tp.base.player.RandomPlayer;
-import es.ucm.fdi.tp.base.player.SmartPlayer;
 import es.ucm.fdi.tp.mvc.GameTable;
 import es.ucm.fdi.tp.ttt.TttAction;
 import es.ucm.fdi.tp.ttt.TttState;
@@ -86,7 +86,7 @@ public class Main {
 		            player = new RandomPlayer(gameName + "(" + playerName + ")");
 		            break;
 		        case "smart":
-		            player = new SmartPlayer(gameName + "(" + playerName + ")", 5);
+		            player = new ConcurrentAiPlayer(gameName + "(" + playerName + ")");
 		            break;
 			}
 			
@@ -127,13 +127,13 @@ public class Main {
 						switch (gType) {
 						case "ttt":
 							new WindowView<S, A>(playerId, new RandomPlayer(Integer.toString(playerId)), 
-							new SmartPlayer(Integer.toString(playerId), 5), (GameView<S, A>) new TttView(TTT_DIM, playerId), control);
+							new ConcurrentAiPlayer(Integer.toString(playerId)), (GameView<S, A>) new TttView(TTT_DIM, playerId), control);
 						break;
 						
 						case "was":
 							
 							new WindowView<S, A>(playerId, new RandomPlayer(Integer.toString(playerId)), 
-							new SmartPlayer(Integer.toString(playerId), 5), (GameView<S, A>) new WasView(playerId), control);
+							new ConcurrentAiPlayer(Integer.toString(playerId)), (GameView<S, A>) new WasView(playerId), control);
 								
 							
 							break;

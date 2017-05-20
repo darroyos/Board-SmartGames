@@ -15,6 +15,7 @@ import es.ucm.fdi.tp.base.Utils;
 import es.ucm.fdi.tp.base.model.GameAction;
 import es.ucm.fdi.tp.base.model.GamePlayer;
 import es.ucm.fdi.tp.base.model.GameState;
+import es.ucm.fdi.tp.base.player.ConcurrentAiPlayer;
 import es.ucm.fdi.tp.mvc.GameEvent;
 import es.ucm.fdi.tp.mvc.GameObserver;
 
@@ -38,7 +39,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	/**
 	 * An smart GamePlayer to request smart actions
 	 */
-	private GamePlayer smartPlayer;
+	private ConcurrentAiPlayer smartPlayer;
 	
 	/**
 	 * The game board
@@ -84,7 +85,9 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	 */
 	private JGameSettings<S, A> settings;
 	
-	public WindowView(int playerId, GamePlayer randPlayer, GamePlayer smartPlayer, GameView<S, A> gameView, WindowController<S, A> winCtrl) {
+	private ThreadsConfig threadsConfig;
+	
+	public WindowView(int playerId, GamePlayer randPlayer, ConcurrentAiPlayer smartPlayer, GameView<S, A> gameView, WindowController<S, A> winCtrl) {
 		super();
 		this.playerId = playerId;
 		this.randPlayer = randPlayer;
@@ -92,6 +95,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		this.gameView = gameView;
 		this.winCtrl = winCtrl;
 		this.settings = new JGameSettings<S, A>(WindowView.this, WindowView.this.gameView);
+		this.threadsConfig = new ThreadsConfig();
 		
 		/* Join random and smart players */
 		smartPlayer.join(playerId);
@@ -145,7 +149,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		/*---------------------------------------------------------------*/
 		/*             MAIN LAYOUT > TOP LAYOUT > SMART MOVES            */
 		/*---------------------------------------------------------------*/
-		top.add(new SmartMoves());
+		top.add(new SmartMoves(this.threadsConfig));
 		
 		/*---------------------------------------------------------------*/
 		/*                  MAIN LAYOUT > RIGHT LAYOUT                   */
@@ -327,7 +331,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		if (randomListener.active && mode.getSelectedItem().equals(Mode.Random))
 			winCtrl.makeSingleMove(randPlayer);
 		else if (smartListener.active && mode.getSelectedItem().equals(Mode.Smart))
-			winCtrl.makeSingleMove(smartPlayer);
+			winCtrl.makeSmartMove(smartPlayer, threadsConfig.getNumThreads(), threadsConfig.getTimeOut());
 	}
 	
 	private class JToolbarGame extends JToolBar {
@@ -394,55 +398,6 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		}
 	}
 	
-	private class SmartMoves extends JPanel {
-		
-		private static final long serialVersionUID = 8577611644379439121L;
-
-		public SmartMoves() {
-			FlowLayout smartLy = new FlowLayout();
-			this.setLayout(smartLy);
-			this.setBorder(BorderFactory.createTitledBorder("Smart Moves"));
-			
-			// -----------------------------------
-			// Threads chooser
-			// -----------------------------------
-			JPanel threads = new JPanel(new FlowLayout());
-			
-			JLabel brainIcon = new JLabel(new ImageIcon(Utils.loadImage("brain.png")));
-			threads.add(brainIcon);
-			JSpinner numThreads = 
-					new JSpinner(new SpinnerNumberModel(1, 1, Runtime.getRuntime().availableProcessors(), 1));
-			threads.add(numThreads);
-			threads.add(new JLabel("threads"));
-			
-			this.add(threads);
-			
-			// -----------------------------------
-			// Threads chooser
-			// -----------------------------------
-			JPanel timeOut = new JPanel(new FlowLayout());
-			
-			JLabel timeIcon = new JLabel(new ImageIcon(Utils.loadImage("timer.png")));
-			timeOut.add(timeIcon);
-			JSpinner timeOutSel = 
-					new JSpinner(new SpinnerNumberModel(500, 500, 5000, 500));
-			timeOut.add(timeOutSel);
-			timeOut.add(new JLabel("ms."));
-			
-			this.add(timeOut);
-			
-			// -----------------------------------
-			// Stop thinking
-			// -----------------------------------
-			JPanel stop = new JPanel(new FlowLayout());
-			JButton stopButton = new JButton(new ImageIcon(Utils.loadImage("stop.png")));
-			stop.add(stopButton);
-			
-			this.add(stop);
-			
-		}
-	}
-	
 	// -----------------------------------------------------
 	// Action Listeners (toolbar butttons and player mode)
 	// -----------------------------------------------------
@@ -475,7 +430,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			if (active) {
 			
 				status.setStatusMessage("You have requested a smart move.");
-				winCtrl.makeSingleMove(smartPlayer);
+				winCtrl.makeSmartMove(smartPlayer, threadsConfig.getNumThreads(), threadsConfig.getTimeOut());
 				
 			}
 		}
