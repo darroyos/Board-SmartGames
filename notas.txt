@@ -1,0 +1,5 @@
+-  TODAS LAS MODIFICACIONES DE COMPONENTES VISUALES EN EDT.
+- makeMove también
+- th.isActive()
+- Desactivar componentes (solo Random, Smart y tablero) antes de la lanzar la hebra.
+- Tomar tiempos con System.currentTimeMillis();

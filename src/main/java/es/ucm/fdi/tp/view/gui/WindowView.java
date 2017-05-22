@@ -87,6 +87,8 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	
 	private ThreadsConfig threadsConfig;
 	
+	private Thread smartThread;
+	
 	public WindowView(int playerId, GamePlayer randPlayer, ConcurrentAiPlayer smartPlayer, GameView<S, A> gameView, WindowController<S, A> winCtrl) {
 		super();
 		this.playerId = playerId;
@@ -96,6 +98,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		this.winCtrl = winCtrl;
 		this.settings = new JGameSettings<S, A>(WindowView.this, WindowView.this.gameView);
 		this.threadsConfig = new ThreadsConfig();
+		this.smartThread = null;
 		
 		/* Join random and smart players */
 		smartPlayer.join(playerId);
@@ -310,6 +313,21 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 
 	}
 	
+	private void makeSmartMove() {
+		this.smartThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				smartPlayer.setMaxThreads(threadsConfig.getNumThreads());
+				smartPlayer.setTimeout(threadsConfig.getTimeOut());
+				winCtrl.makeSingleMove(smartPlayer);
+			}
+			
+		});
+		
+		this.smartThread.start();
+	}
+	
 	private void disableWaitingPlayerView(int turn) {
 		if (this.playerId != turn)
 			gameView.disable();
@@ -331,7 +349,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		if (randomListener.active && mode.getSelectedItem().equals(Mode.Random))
 			winCtrl.makeSingleMove(randPlayer);
 		else if (smartListener.active && mode.getSelectedItem().equals(Mode.Smart))
-			winCtrl.makeSmartMove(smartPlayer, threadsConfig.getNumThreads(), threadsConfig.getTimeOut());
+			makeSmartMove();
 	}
 	
 	private class JToolbarGame extends JToolBar {
@@ -430,7 +448,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			if (active) {
 			
 				status.setStatusMessage("You have requested a smart move.");
-				winCtrl.makeSmartMove(smartPlayer, threadsConfig.getNumThreads(), threadsConfig.getTimeOut());
+				makeSmartMove();
 				
 			}
 		}
