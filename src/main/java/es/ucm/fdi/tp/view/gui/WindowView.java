@@ -311,8 +311,11 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			break;
 			
 		case Stop:
-			status.setStatusMessage(e.toString());
-			this.dispose();
+			/* In case the game's stopped we need to interrupt the alive threads */
+			if (this.smartThread.isAlive()) {
+				this.smartThread.interrupt();
+			}
+			
 			break;
 			
 		case Info:
@@ -324,6 +327,11 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	}
 	
 	private void makeSmartMove() {
+		/* Disable visual components (only Smart and Random) */
+		deactivateButtons();
+		
+		gameView.disable();
+	
 		this.smartMoves.setThinking(true);
 		this.smartThread = new SmartThread();
 		this.smartThread.start();
@@ -484,8 +492,11 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(smartThread.isAlive())
+					if(smartThread.isAlive()) {
 						smartThread.interrupt();
+						activateButtons(); // we activate them to be able to resume the smart moves
+						gameView.refresh();
+					}				
 				}
 				
 			});
@@ -510,8 +521,8 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			
 			long startTime = System.currentTimeMillis();
 			winCtrl.makeSingleMove(smartPlayer);
-			
 			long endTime = System.currentTimeMillis();
+			
 			long nodes = smartPlayer.getEvaluationCount();
 			long time = endTime - startTime;
 			long nodesPerMs = nodes / time;
@@ -575,6 +586,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	private class RestartListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			winCtrl.stopGame();
 			winCtrl.startGame();
 		}
 	}

@@ -35,7 +35,8 @@ public class WindowController<S extends GameState<S, A>, A extends GameAction<S,
 
 				@Override
 				public void run() {
-					game.execute(action); 
+					if (action != null)
+						game.execute(action); 
 				}
 				
 			});
