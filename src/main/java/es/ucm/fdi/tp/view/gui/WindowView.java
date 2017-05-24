@@ -200,9 +200,9 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		this.setFocusable(true);
 		this.addKeyListener(new BoardKeyListener());
 		
+		this.pack();
 		this.setVisible(true);
 		this.setResizable(false);
-		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
