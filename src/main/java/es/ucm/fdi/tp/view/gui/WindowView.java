@@ -1,6 +1,7 @@
 package es.ucm.fdi.tp.view.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,8 @@ import java.awt.event.KeyListener;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import es.ucm.fdi.tp.base.Utils;
 import es.ucm.fdi.tp.base.model.GameAction;
@@ -87,7 +90,12 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	
 	private ThreadsConfig threadsConfig;
 	
-	private Thread smartThread;
+	private SmartThread smartThread;
+	
+	private SmartMoves smartMoves;
+	
+	private JPanel brainBg;
+	
 	
 	public WindowView(int playerId, GamePlayer randPlayer, ConcurrentAiPlayer smartPlayer, GameView<S, A> gameView, WindowController<S, A> winCtrl) {
 		super();
@@ -98,7 +106,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		this.winCtrl = winCtrl;
 		this.settings = new JGameSettings<S, A>(WindowView.this, WindowView.this.gameView);
 		this.threadsConfig = new ThreadsConfig();
-		this.smartThread = null;
+		// this.smartThread = null;
 		
 		/* Join random and smart players */
 		smartPlayer.join(playerId);
@@ -152,7 +160,9 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 		/*---------------------------------------------------------------*/
 		/*             MAIN LAYOUT > TOP LAYOUT > SMART MOVES            */
 		/*---------------------------------------------------------------*/
-		top.add(new SmartMoves(this.threadsConfig));
+		this.smartThread = new SmartThread();
+		this.smartMoves = new SmartMoves();
+		top.add(smartMoves);
 		
 		/*---------------------------------------------------------------*/
 		/*                  MAIN LAYOUT > RIGHT LAYOUT                   */
@@ -314,17 +324,8 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	}
 	
 	private void makeSmartMove() {
-		this.smartThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				smartPlayer.setMaxThreads(threadsConfig.getNumThreads());
-				smartPlayer.setTimeout(threadsConfig.getTimeOut());
-				winCtrl.makeSingleMove(smartPlayer);
-			}
-			
-		});
-		
+		this.smartMoves.setThinking(true);
+		this.smartThread = new SmartThread();
 		this.smartThread.start();
 	}
 	
@@ -413,6 +414,119 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			this.exit.setFocusable(false);
 			this.exit.addActionListener(new ExitListener());
 			this.add(exit);	
+		}
+	}
+	
+	private class SmartMoves extends JPanel {
+		private static final long serialVersionUID = 8577611644379439121L;
+
+		public SmartMoves() {		
+			FlowLayout smartLy = new FlowLayout();
+			this.setLayout(smartLy);
+			this.setBorder(BorderFactory.createTitledBorder("Smart Moves"));
+			
+			// -----------------------------------
+			// Threads chooser
+			// -----------------------------------
+			JPanel threads = new JPanel(new FlowLayout());
+
+			brainBg = new JPanel();
+			JLabel brainIcon = new JLabel(new ImageIcon(Utils.loadImage("brain.png")));
+			brainBg.add(brainIcon);
+			threads.add(brainBg);
+			JSpinner numThreads = 
+					new JSpinner(new SpinnerNumberModel(1, 1, Runtime.getRuntime().availableProcessors(), 1));
+			
+			numThreads.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					threadsConfig.setNumThreads(Integer.parseInt(numThreads.getValue().toString()));
+				}
+				
+			});
+			threads.add(numThreads);
+			threads.add(new JLabel("threads"));
+			
+			this.add(threads);
+			
+			// -----------------------------------
+			// Timeout chooser
+			// -----------------------------------
+			JPanel timeOut = new JPanel(new FlowLayout());
+			
+			JLabel timeIcon = new JLabel(new ImageIcon(Utils.loadImage("timer.png")));
+			timeOut.add(timeIcon);
+			JSpinner timeOutSel = 
+					new JSpinner(new SpinnerNumberModel(500, 500, 5000, 500));
+			
+			timeOutSel.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					threadsConfig.setTimeOut(Integer.parseInt(timeOutSel.getValue().toString()));
+				}
+				
+			});
+			
+			timeOut.add(timeOutSel);
+			timeOut.add(new JLabel("ms."));
+			
+			this.add(timeOut);
+			
+			// -----------------------------------
+			// Stop thinking
+			// -----------------------------------
+			JPanel stop = new JPanel(new FlowLayout());
+			JButton stopButton = new JButton(new ImageIcon(Utils.loadImage("stop.png")));
+			
+			stopButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(smartThread.isAlive())
+						smartThread.interrupt();
+				}
+				
+			});
+			
+			stop.add(stopButton);
+			
+			this.add(stop);
+			
+		}
+		
+		public void setThinking(boolean thinking) {
+			brainBg.setBackground(thinking ? Color.YELLOW : null);	
+		}
+	}
+	
+	private class SmartThread extends Thread {
+		
+		@Override
+		public void run() {
+			smartPlayer.setMaxThreads(threadsConfig.getNumThreads());
+			smartPlayer.setTimeout(threadsConfig.getTimeOut());
+			
+			long startTime = System.currentTimeMillis();
+			winCtrl.makeSingleMove(smartPlayer);
+			
+			long endTime = System.currentTimeMillis();
+			long nodes = smartPlayer.getEvaluationCount();
+			long time = endTime - startTime;
+			long nodesPerMs = nodes / time;
+			
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					WindowView.this.smartMoves.setThinking(false);
+					
+					WindowView.this.status.setStatusMessage(nodes
+							+ " nodes in " + time + " ms (" + nodesPerMs + " n/ms) value = " + smartPlayer.getValue());
+				}
+				
+			});
 		}
 	}
 	

@@ -2,6 +2,8 @@ package es.ucm.fdi.tp.view.gui;
 
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import es.ucm.fdi.tp.base.model.GameAction;
 import es.ucm.fdi.tp.base.model.GameError;
 import es.ucm.fdi.tp.base.model.GamePlayer;
@@ -26,8 +28,17 @@ public class WindowController<S extends GameState<S, A>, A extends GameAction<S,
 	}
 	
 	public void makeSingleMove(GamePlayer player) {
+		A action = player.requestAction(game.getState());
+		
 		try {
-			game.execute(player.requestAction(game.getState())); 
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					game.execute(action); 
+				}
+				
+			});
 		} catch (GameError e) { /* Silent exception */ }
 	}
 	
