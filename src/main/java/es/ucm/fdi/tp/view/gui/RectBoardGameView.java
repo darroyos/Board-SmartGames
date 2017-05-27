@@ -64,7 +64,7 @@ public abstract class RectBoardGameView<S extends GameState<S, A>, A extends Gam
 	
 	private void initGUI(int rows, int cols) {
 		
-		this.setPreferredSize(new Dimension(380, 380));
+		this.setPreferredSize(new Dimension(450, 450));
 		/* Create a GridLayout to store all our fields */
 		this.setLayout(new GridLayout(rows, cols, 1, 1));
 		

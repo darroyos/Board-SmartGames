@@ -12,11 +12,14 @@ import es.ucm.fdi.tp.base.model.GamePlayer;
 import es.ucm.fdi.tp.base.model.GameState;
 import es.ucm.fdi.tp.base.player.ConcurrentAiPlayer;
 import es.ucm.fdi.tp.base.player.RandomPlayer;
+import es.ucm.fdi.tp.chess.ChessAction;
+import es.ucm.fdi.tp.chess.ChessState;
 import es.ucm.fdi.tp.mvc.GameTable;
 import es.ucm.fdi.tp.ttt.TttAction;
 import es.ucm.fdi.tp.ttt.TttState;
 import es.ucm.fdi.tp.view.console.ConsoleController;
 import es.ucm.fdi.tp.view.console.ConsoleView;
+import es.ucm.fdi.tp.view.gui.ChessView;
 import es.ucm.fdi.tp.view.gui.GameView;
 import es.ucm.fdi.tp.view.gui.TttView;
 import es.ucm.fdi.tp.view.gui.WasView;
@@ -38,6 +41,10 @@ public class Main {
 					break;
 				case "was":
 					game = new GameTable<WolfAndSheepState, WolfAndSheepAction>(new WolfAndSheepState());
+					break;
+					
+				case "chess":
+					game = new GameTable<ChessState, ChessAction>(new ChessState());
 					break;
 	
 				}
@@ -119,7 +126,8 @@ public class Main {
 				public void run() {
 					
 					for (int i = 0; i <	(gType.equals("ttt") ? new TttState(TTT_DIM).getPlayerCount()
-									  : gType.equals("was") ? new WolfAndSheepState().getPlayerCount() : 0)
+									  : gType.equals("was") ? new WolfAndSheepState().getPlayerCount()
+									  : gType.equals("chess") ? new WolfAndSheepState().getPlayerCount() : 0)
 							; i++) {
 						
 						int playerId = i;
@@ -135,6 +143,12 @@ public class Main {
 							new WindowView<S, A>(playerId, new RandomPlayer(Integer.toString(playerId)), 
 							new ConcurrentAiPlayer(Integer.toString(playerId)), (GameView<S, A>) new WasView(playerId), control);
 								
+							
+							break;
+							
+						case "chess":
+							new WindowView<S, A>(playerId, new RandomPlayer(Integer.toString(playerId)),
+							new ConcurrentAiPlayer(Integer.toString(playerId)), (GameView<S, A>) new ChessView(new ChessState(), playerId), control);
 							
 							break;
 						}
@@ -159,7 +173,7 @@ public class Main {
 		}
 		
 		public static void main(String[] args) {
-			if (args.length < 2) {
+			if (args.length < 4) {
 				usage();
 				System.exit(1);
 			}
