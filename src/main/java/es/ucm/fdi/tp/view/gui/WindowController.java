@@ -2,7 +2,7 @@ package es.ucm.fdi.tp.view.gui;
 
 import java.util.List;
 
-import javax.swing.SwingUtilities;
+// import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.base.model.GameAction;
 import es.ucm.fdi.tp.base.model.GameError;
@@ -31,7 +31,8 @@ public class WindowController<S extends GameState<S, A>, A extends GameAction<S,
 		A action = player.requestAction(game.getState());
 		
 		try {
-			SwingUtilities.invokeLater(new Runnable() {
+			// Da problemas a la hora de reiniciar el juego
+			/* SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
@@ -39,7 +40,11 @@ public class WindowController<S extends GameState<S, A>, A extends GameAction<S,
 						game.execute(action); 
 				}
 				
-			});
+			}); */
+			
+			if (action != null && player.getPlayerNumber() == game.getState().getTurn())
+				game.execute(action); 
+			
 		} catch (GameError e) { /* Silent exception */ }
 	}
 	

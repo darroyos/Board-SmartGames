@@ -260,7 +260,7 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			this.setTitle(title.substring(title.lastIndexOf(".") + 1));
 			
 			/* Automatic moves (ComboBox) */
-			makeModeSelectedMove();
+			// makeModeSelectedMove();
 			
 			break;
 			
@@ -315,6 +315,9 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 			if (this.smartThread.isAlive()) {
 				this.smartThread.interrupt();
 			}
+			
+			/* Set the manual mode (default one) */
+			this.mode.setSelectedItem(Mode.Manual);
 			
 			break;
 			
