@@ -83,18 +83,18 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 				 * we just apply the first action whose source and destination coordinates match
 				 * the selected ones
 				 */
-				
+
 				List<ChessAction> actions = chessState.validActions(player); // Get the valid actions list
-			
-				boolean movementMaked = false;
-				
-				for (int i = 0; i < actions.size() && !movementMaked; i++) {
+
+				boolean movementMade = false;
+
+				for (int i = 0; i < actions.size() && !movementMade; i++) {
 					ChessAction a = actions.get(i);
-					
+
 					if (a.getSrcRow() == this.sourceRow && a.getSrcCol() == this.sourceCol
 							&& a.getDstRow() == this.destRow && a.getDstCol() == this.destCol) {
 						windowCtrl.makeMove(a); // first valid action
-						movementMaked = true;
+						movementMade = true;
 					}
 				}				
 			}
@@ -123,7 +123,7 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 				else {
 					/* We fetch the icon URL */
 					String iconUrl = "chess/" + ChessBoard.Piece.iconName(piece);
-					
+
 					/* We just set the icon for the non-empty fields */
 					field.setIcon(new ImageIcon(Utils.loadImage(iconUrl)));
 
