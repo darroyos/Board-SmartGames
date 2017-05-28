@@ -123,18 +123,7 @@ public class WasView extends RectBoardGameView<WolfAndSheepState, WolfAndSheepAc
 				switch (state.at(row, col)) {
 				
 				case WolfAndSheepState.EMPTY:					
-					field.setIcon(null);
-					
-					if (row % 2 == 0 && col % 2 == 0) 
-						field.setBackground(Color.BLACK);
-
-					/* Black fields on odd columns and rows */
-					else if ((row + 1) % 2 == 0 && (col + 1) % 2 == 0)
-						field.setBackground(Color.BLACK);
-					
-					/* White fields */
-					else
-						field.setBackground(null);
+					setEmptyField(row, col);
 		
 					break;				
 							

@@ -36,7 +36,9 @@ public class ConsoleController<S extends GameState<S, A>, A extends GameAction<S
 			
 			try {
 				this.game.execute(action);
-			} catch(GameError e) { /* Silent exception */};
+			} catch(GameError e) {
+				System.out.println("[CCONTROLLER EXCEPTION]: " + e.getMessage());
+			};
 			
 		}
 

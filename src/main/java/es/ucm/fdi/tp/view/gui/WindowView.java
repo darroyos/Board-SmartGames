@@ -88,14 +88,21 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	 */
 	private JGameSettings<S, A> settings;
 	
+	/**
+	 * It encapsulates the threads configuration
+	 */
 	private ThreadsConfig threadsConfig;
 	
+	/**
+	 * Thread for smart movements
+	 */
 	private SmartThread smartThread;
 	
+	/**
+	 * Smart moves panel. Need it to change the brain icon while it's active
+	 */
 	private SmartMoves smartMoves;
-	
-	private JPanel brainBg;
-	
+		
 	
 	public WindowView(int playerId, GamePlayer randPlayer, ConcurrentAiPlayer smartPlayer, GameView<S, A> gameView, WindowController<S, A> winCtrl) {
 		super();
@@ -430,6 +437,8 @@ public class WindowView<S extends GameState<S, A>, A extends GameAction<S, A>>
 	
 	private class SmartMoves extends JPanel {
 		private static final long serialVersionUID = 8577611644379439121L;
+		
+		private JPanel brainBg;
 
 		public SmartMoves() {		
 			FlowLayout smartLy = new FlowLayout();

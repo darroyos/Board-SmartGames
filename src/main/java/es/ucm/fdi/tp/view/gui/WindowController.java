@@ -2,7 +2,7 @@ package es.ucm.fdi.tp.view.gui;
 
 import java.util.List;
 
-// import javax.swing.SwingUtilities;
+import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.base.model.GameAction;
 import es.ucm.fdi.tp.base.model.GameError;
@@ -24,34 +24,41 @@ public class WindowController<S extends GameState<S, A>, A extends GameAction<S,
 	public void makeMove(A action) {
 		try {
 			game.execute(action);
-		} catch (GameError e) { /* Silent exception */ }
+		} catch (GameError e) {
+			System.out.println("[WCONTROLLER EXCEPTION]: " + e.getMessage());
+		}
 	}
 	
+	/**
+	 * Makes a random or smart movement
+	 * 
+	 * @param player The player
+	 */
 	public void makeSingleMove(GamePlayer player) {
 		A action = player.requestAction(game.getState());
 		
 		try {
-			// Da problemas a la hora de reiniciar el juego
-			/* SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					if (action != null)
+					if (action != null && player.getPlayerNumber() == game.getState().getTurn())
 						game.execute(action); 
 				}
 				
-			}); */
+			});
 			
-			if (action != null && player.getPlayerNumber() == game.getState().getTurn())
-				game.execute(action); 
-			
-		} catch (GameError e) { /* Silent exception */ }
+		} catch (GameError e) {
+			System.out.println("[WCONTROLLER EXCEPTION]: " + e.getMessage());
+		}
 	}
 	
 	public void stopGame() {
 		try {
 			game.stop();
-		} catch (GameError e) { /* Silent exception */ }
+		} catch (GameError e) {
+			System.out.println("[WCONTROLLER EXCEPTION]: " + e.getMessage());
+		}
 	}
 
 	public void startGame() {

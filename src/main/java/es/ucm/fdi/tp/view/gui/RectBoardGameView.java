@@ -127,6 +127,28 @@ public abstract class RectBoardGameView<S extends GameState<S, A>, A extends Gam
 		this.fields[row][col].setBackground(color);
 		this.fields[row][col].setIcon(new ImageIcon(Utils.loadImage("plus-empty.png")));
 	}
+	
+	/**
+	 * Customize the empty field depending on the board position.
+	 * Black fields on odd columns and rows, and white ones for the rest
+	 * 
+	 * @param row The field's row
+	 * @param col The field's col
+	 */
+	public void setEmptyField(int row, int col) {
+		fields[row][col].setIcon(null);
+
+		if (row % 2 == 0 && col % 2 == 0) 
+			fields[row][col].setBackground(Color.BLACK);
+
+		/* Black fields on odd columns and rows */
+		else if ((row + 1) % 2 == 0 && (col + 1) % 2 == 0)
+			fields[row][col].setBackground(Color.BLACK);
+
+		/* White fields */
+		else
+			fields[row][col].setBackground(null);
+	}
 
 	/**
 	 * @return A random color

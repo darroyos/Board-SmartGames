@@ -3,7 +3,6 @@ package es.ucm.fdi.tp.view.gui;
 import java.awt.Color;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 
 import es.ucm.fdi.tp.base.Utils;
@@ -61,8 +60,7 @@ public class TttView extends RectBoardGameView<TttState, TttAction> {
 		/* Just enable the fields which have valid actions for the source field */
 		for (TttAction a : actions) {
 			if (a.getRow() == this.row && a.getCol() == this.col) {
-				getField(a.getRow(), a.getCol()).setEnabled(true);
-				getField(a.getRow(), a.getCol()).setBorder(BorderFactory.createLineBorder(Color.BLUE));
+				setEnabledField(row, col);
 			}
 		}
 		
@@ -100,18 +98,7 @@ public class TttView extends RectBoardGameView<TttState, TttAction> {
 					if (!state.isFinished())
 						field.setEnabled(true);
 					
-					field.setIcon(null);
-					
-					if (row % 2 == 0 && col % 2 == 0) 
-						field.setBackground(Color.BLACK);
-
-					/* Black fields on odd columns and rows */
-					else if ((row + 1) % 2 == 0 && (col + 1) % 2 == 0)
-						field.setBackground(Color.BLACK);
-					
-					/* White fields */
-					else
-						field.setBackground(null);
+					setEmptyField(row, col);
 		
 					break;	
 							

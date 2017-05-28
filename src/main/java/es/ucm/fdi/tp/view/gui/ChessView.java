@@ -81,7 +81,7 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 				/*
 				 * As the chess actions are more complex than the previously implemented games,
 				 * we just apply the first action whose source and destination coordinates match
-				 * the ones selected
+				 * the selected ones
 				 */
 				
 				List<ChessAction> actions = chessState.validActions(player); // Get the valid actions list
@@ -93,7 +93,7 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 					
 					if (a.getSrcRow() == this.sourceRow && a.getSrcCol() == this.sourceCol
 							&& a.getDstRow() == this.destRow && a.getDstCol() == this.destCol) {
-						windowCtrl.makeMove(a);
+						windowCtrl.makeMove(a); // first valid action
 						movementMaked = true;
 					}
 				}				
@@ -117,15 +117,15 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 
 				byte piece = state.getBoard().get(row, col);
 
-				/* We fetch the icon URL */
-				String iconUrl = "chess/" + ChessBoard.Piece.iconName(piece);
-
-				/* We just set the icon for the non-empty fields */
-				if (!iconUrl.equals("chess/._w.png")) {
-					field.setIcon(new ImageIcon(Utils.loadImage(iconUrl)));
+				if (ChessBoard.empty(piece)) {
+					setEmptyField(row, col);
 				}
-
-				if (!ChessBoard.empty(piece)) {
+				else {
+					/* We fetch the icon URL */
+					String iconUrl = "chess/" + ChessBoard.Piece.iconName(piece);
+					
+					/* We just set the icon for the non-empty fields */
+					field.setIcon(new ImageIcon(Utils.loadImage(iconUrl)));
 
 					if (ChessBoard.black(piece)) {
 						field.setBackground(blackPlayer);
@@ -137,20 +137,6 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 					if (ChessBoard.sameTurn(piece, chessState.getTurn())) {
 						field.setEnabled(true);
 					}
-				}
-				else {
-					field.setIcon(null);
-
-					if (row % 2 == 0 && col % 2 == 0) 
-						field.setBackground(Color.BLACK);
-
-					/* Black fields on odd columns and rows */
-					else if ((row + 1) % 2 == 0 && (col + 1) % 2 == 0)
-						field.setBackground(Color.BLACK);
-
-					/* White fields */
-					else
-						field.setBackground(null);
 				}
 			}
 		}
