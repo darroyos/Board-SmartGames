@@ -11,6 +11,8 @@ import java.util.Iterator;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 
 import es.ucm.fdi.tp.base.Utils;
 import es.ucm.fdi.tp.base.model.GameAction;
@@ -109,6 +111,21 @@ public abstract class RectBoardGameView<S extends GameState<S, A>, A extends Gam
 			return fields[row][col];
 		else
 			return null;		
+	}
+	
+	/**
+	 * It enables and customizes the desired field. Used in destination rows and cols
+	 * 
+	 * @param row The field's row
+	 * @param col The field's col
+	 */
+	public void setEnabledField(int row, int col) {
+		Color color = new Color(224, 224, 224);
+		
+		this.fields[row][col].setEnabled(true);
+		this.fields[row][col].setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		this.fields[row][col].setBackground(color);
+		this.fields[row][col].setIcon(new ImageIcon(Utils.loadImage("plus-empty.png")));
 	}
 
 	/**

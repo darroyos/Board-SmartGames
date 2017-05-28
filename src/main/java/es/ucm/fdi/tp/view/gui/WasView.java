@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 
 import es.ucm.fdi.tp.base.Utils;
@@ -64,8 +63,7 @@ public class WasView extends RectBoardGameView<WolfAndSheepState, WolfAndSheepAc
 			/* Just enable the fields which have valid actions for the source field */
 			for (WolfAndSheepAction a : actions) {
 				if (a.getSourceRow() == this.sourceRow && a.getSourceCol() == this.sourceCol) {
-					getField(a.getRow(), a.getCol()).setEnabled(true);
-					getField(a.getRow(), a.getCol()).setBorder(BorderFactory.createLineBorder(Color.BLUE));
+					setEnabledField(a.getRow(), a.getCol());
 				}
 			}
 			

@@ -125,6 +125,7 @@ public class Main {
 				@Override
 				public void run() {
 					
+					/* It loops the expected game's player number */
 					for (int i = 0; i <	(gType.equals("ttt") ? new TttState(TTT_DIM).getPlayerCount()
 									  : gType.equals("was") ? new WolfAndSheepState().getPlayerCount()
 									  : gType.equals("chess") ? new WolfAndSheepState().getPlayerCount() : 0)
@@ -173,7 +174,9 @@ public class Main {
 		}
 		
 		public static void main(String[] args) {
-			if (args.length < 4) {
+			
+			/* The GUI mode just needs 2 args, while the console one need 4 arguments at least */
+			if (args.length < 2 || args[1].equals("console") && args.length < 4) {
 				usage();
 				System.exit(1);
 			}

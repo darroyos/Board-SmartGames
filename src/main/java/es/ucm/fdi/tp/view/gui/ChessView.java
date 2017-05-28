@@ -4,12 +4,10 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 
 import es.ucm.fdi.tp.base.Utils;
 import es.ucm.fdi.tp.chess.ChessAction;
-import es.ucm.fdi.tp.chess.ChessAction.Special;
 import es.ucm.fdi.tp.chess.ChessBoard;
 import es.ucm.fdi.tp.chess.ChessState;
 
@@ -65,10 +63,7 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 			/* Just enable the fields which have valid actions for the source field */
 			for (ChessAction a : actions) {
 				if (a.getSrcRow() == this.sourceRow && a.getSrcCol() == this.sourceCol) {
-					getField(a.getDstRow(), a.getDstCol()).setEnabled(true);
-					Color color = new Color(190, 190, 190);
-					getField(a.getDstRow(), a.getDstCol()).setBorder(BorderFactory.createLineBorder(Color.GRAY));
-					getField(a.getDstRow(), a.getDstCol()).setBackground(color);
+					setEnabledField(a.getDstRow(), a.getDstCol());
 				}
 			}
 
@@ -82,14 +77,27 @@ public class ChessView extends RectBoardGameView<ChessState, ChessAction> {
 
 			if (cancelMovement())
 				update(chessState); // Board update
-			else if (this.destRow == 0) {
-				windowCtrl.makeMove(new ChessAction(this.player, this.sourceRow, this.sourceCol, destRow, destCol, Special.QueenQ));
-			}
 			else {
-				// Apply the movement
-				windowCtrl.makeMove(new ChessAction
-						(this.player, this.sourceRow, this.sourceCol, destRow, destCol));
-			}			
+				/*
+				 * As the chess actions are more complex than the previously implemented games,
+				 * we just apply the first action whose source and destination coordinates match
+				 * the ones selected
+				 */
+				
+				List<ChessAction> actions = chessState.validActions(player); // Get the valid actions list
+			
+				boolean movementMaked = false;
+				
+				for (int i = 0; i < actions.size() && !movementMaked; i++) {
+					ChessAction a = actions.get(i);
+					
+					if (a.getSrcRow() == this.sourceRow && a.getSrcCol() == this.sourceCol
+							&& a.getDstRow() == this.destRow && a.getDstCol() == this.destCol) {
+						windowCtrl.makeMove(a);
+						movementMaked = true;
+					}
+				}				
+			}
 
 			// We're now ready for new clicks!
 			restartCoordinates();
