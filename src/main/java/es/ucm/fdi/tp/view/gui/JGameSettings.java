@@ -157,7 +157,7 @@ public class JGameSettings<S extends GameState<S, A>, A extends GameAction<S, A>
 		private String about1 = "This is a Java program to play up to 2 board games. ";
 		private String about2 = "Developed using MVC (Model View Controller) pattern";
 		private String about3 = "and Swing for GUI (Graphical User Interface).";
-		private String credits = "Developed by David Arroyo and Ignacio Cepeda";
+		private String credits = "Developed by David Arroyo";
 		
 		public AboutPanel() {
 			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
