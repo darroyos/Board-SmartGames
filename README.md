@@ -26,7 +26,7 @@ Because a picture is worth a thousand words!
 ### Tic Tac Toe
 ![alt text](/assets/ttt.png)
 
-### Completely customizable
+### Fully customizable
 
 #### Awesome sound effects
 Ok... maybe not that awesome...
