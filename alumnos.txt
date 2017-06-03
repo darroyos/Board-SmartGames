@@ -1,5 +1,4 @@
 ﻿David Arroyo Segovia
-Ignacio Cepeda Bajo
 
 Notas:
 Hemos implementado el ajedrez gráfico que se proponía en el enunciado de la práctica.
